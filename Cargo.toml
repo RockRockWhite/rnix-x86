@@ -1,0 +1,23 @@
+[package]
+name = "rnix"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.dev]
+panic = "abort"
+lto = true
+
+[profile.release]
+panic = "abort"
+lto = true
+debug = true
+
+[lib]
+name = "kernel"
+path = "src/kernel/lib.rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+modular-bitfield = "0.11.2"
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }

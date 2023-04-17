@@ -1,0 +1,4 @@
+# /.cargo/config
+
+[build]
+target = "i686-unknown-none.json"
