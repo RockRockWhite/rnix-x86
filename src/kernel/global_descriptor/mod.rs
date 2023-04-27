@@ -15,18 +15,16 @@ lazy_static! {
                 pointer: Pointer::new().with_limit((MAX_GDT * 8 - 1) as u16),
             };
 
-            unsafe {
-                // 读取旧的gdt胖指针
-                let ptr: *mut Pointer;
-                asm!("sgdt [{}]", out(reg) ptr);
-                let ptr = *ptr;
+            // 读取旧的gdt胖指针
+            let ptr: *mut Pointer;
+            asm!("sgdt [{}]", out(reg) ptr);
+            let ptr = *ptr;
 
-                let limit = ptr.limit() as usize / 8;
-                let src = ptr.base() as *const Descriptor;
+            let limit = ptr.limit() as usize / 8;
+            let src = ptr.base() as *const Descriptor;
 
-                for i in 1..limit + 1 {
-                    gdt.descriptors[i] = *src.add(i);
-                }
+            for i in 1..limit + 1 {
+                gdt.descriptors[i] = *src.add(i);
             }
 
             gdt
