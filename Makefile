@@ -23,8 +23,8 @@ $(BUILD)/kernel/%.a: $(BUILD)/$(TARGET)/$(MODE)/%.a
 	$(shell mkdir -p $(dir $@))
 	cp $< $@
 
-
-$(BUILD)/$(TARGET)/$(MODE)/libkernel.a: $(SRC)/kernel/*
+.PHONY: $(BUILD)/$(TARGET)/$(MODE)/libkernel.a
+$(BUILD)/$(TARGET)/$(MODE)/libkernel.a:
 	cargo xbuild $(MODE_ARG)
 
 $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \

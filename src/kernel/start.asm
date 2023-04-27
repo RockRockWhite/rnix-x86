@@ -1,15 +1,17 @@
 [bits 32]
 extern kernel_init
+extern print_handler
 global _start
+global handler
 
 _start:
     xchg bx, bx
     call kernel_init
     xchg bx, bx
-
-    ; 调用中断函数
-    mov eax, 0
-    mov edx, 0
-    div edx
+    int 0x80
     
     jmp $
+
+handler:
+    call print_handler
+    iret

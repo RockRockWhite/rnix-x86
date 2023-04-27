@@ -2,27 +2,45 @@
 #![no_main]
 #![feature(panic_info_message)]
 
-use global_descriptor::Gdt;
-use task::Task;
-
 mod console;
 mod global_descriptor;
+mod interrupt;
 mod io;
 mod lang_items;
 mod sync;
 mod task;
 
+use core::arch::asm;
+use task::Task;
+
 #[no_mangle]
-pub extern "C" fn kernel_init() -> ! {
-    let gdt = Gdt::new();
+pub extern "C" fn kernel_init() {
+    global_descriptor::load_gdt();
+    unsafe {
+        asm!("xchg bx, bx");
+        asm!("mov ax, 666");
+    }
 
     let task_a = unsafe { Task::from_ptr(0x1000, a_func).as_ref().unwrap() };
-
     let task_b = unsafe { Task::from_ptr(0x2000, b_func).as_ref().unwrap() };
 
-    task_a.switch();
+    extern "C" {
+        fn handler();
+    }
 
-    loop {}
+    interrupt::set_handler(0x80, handler as usize);
+    interrupt::load_idt();
+
+    // let res = ;
+
+    // println!("res:{}", res);åå
+    // task_a.switch();
+
+    unsafe {
+        asm!("int 0x80");
+    }
+
+    // loop {}
 }
 
 fn a_func() {
@@ -49,4 +67,9 @@ fn b_func() {
             task_a.as_ref().unwrap().switch();
         }
     }
+}
+
+#[no_mangle]
+pub extern "C" fn print_handler() {
+    println!("i 'm in interrupt handler")
 }
