@@ -2,11 +2,16 @@ BUILD:=./target
 SRC:=./src
 
 TARGET := i686-unknown-none
+# TARGET := i686-unknown-linux-musl
 MODE := release
 
 # Building mode argument
 ifeq ($(MODE), release)
 	MODE_ARG := --release
+endif
+
+ifeq ($(TARGET), i686-unknown-none)
+	TARGET_ARG := --target "i686-unknown-none.json"
 endif
 
 ENTRYPOINT:=0x10000
@@ -25,7 +30,7 @@ $(BUILD)/kernel/%.a: $(BUILD)/$(TARGET)/$(MODE)/%.a
 
 .PHONY: $(BUILD)/$(TARGET)/$(MODE)/libkernel.a
 $(BUILD)/$(TARGET)/$(MODE)/libkernel.a:
-	cargo xbuild $(MODE_ARG)
+	cargo xbuild $(MODE_ARG) $(TARGET_ARG)
 
 $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/libkernel.a

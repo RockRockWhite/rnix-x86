@@ -1,4 +1,5 @@
 # /.cargo/config
 
 [build]
-target = "i686-unknown-none.json"
+# target = "i686-unknown-none.json"
+# target = "i686-unknown-linux-gnu"

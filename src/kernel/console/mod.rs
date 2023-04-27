@@ -1,10 +1,9 @@
 use core::fmt::{self, Write};
 
-use crate::io;
 use crate::sync::UPSafeCell;
 use buffer::*;
-
 use lazy_static::lazy_static;
+
 mod buffer;
 mod constants;
 

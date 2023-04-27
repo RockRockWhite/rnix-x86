@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use super::constants::*;
 use modular_bitfield::{bitfield, specifiers::*};
 

@@ -1,7 +1,7 @@
 mod constants;
 mod descriptor_table;
 
-use crate::{println, sync::UPSafeCell};
+use crate::sync::UPSafeCell;
 use constants::*;
 use core::arch::asm;
 use descriptor_table::*;

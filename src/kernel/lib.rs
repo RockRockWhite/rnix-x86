@@ -16,10 +16,6 @@ use task::Task;
 #[no_mangle]
 pub extern "C" fn kernel_init() {
     global_descriptor::load_gdt();
-    unsafe {
-        asm!("xchg bx, bx");
-        asm!("mov ax, 666");
-    }
 
     let task_a = unsafe { Task::from_ptr(0x1000, a_func).as_ref().unwrap() };
     let task_b = unsafe { Task::from_ptr(0x2000, b_func).as_ref().unwrap() };
