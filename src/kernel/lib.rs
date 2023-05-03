@@ -38,23 +38,41 @@ pub extern "C" fn kernel_init() -> ! {
 
 fn a_func() {
     loop {
+        unsafe {
+            asm!("cli");
+        }
+
         for _ in 0..1000000 {
             unsafe {
                 asm!("nop");
             }
         }
+
         print!("A");
+        unsafe {
+            asm!("sti");
+        }
     }
 }
 
 fn b_func() {
     loop {
+        unsafe {
+            asm!("cli");
+        }
+
+        interrupt::pic::send_eoi(0x20);
+
         for _ in 0..1000000 {
             unsafe {
                 asm!("nop");
             }
         }
+
         print!("B");
+        unsafe {
+            asm!("sti");
+        }
     }
 }
 

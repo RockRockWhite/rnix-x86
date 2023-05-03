@@ -1,4 +1,4 @@
-use core::arch::global_asm;
+use core::arch::{asm, global_asm};
 
 mod constants;
 mod pcb;
@@ -18,6 +18,7 @@ pub extern "C" fn schedule() {
     } else {
         0x1000 as *const Task
     };
+
     interrupt::pic::send_eoi(0x20);
 
     print!("-S-");

@@ -2,7 +2,6 @@
 .global task_switch
 
 task_switch:
-    cli
     push ebp
     mov ebp, esp
 
@@ -23,5 +22,4 @@ task_switch:
     pop ebx
     pop ebp
 
-    sti
     ret

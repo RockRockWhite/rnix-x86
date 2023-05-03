@@ -16,20 +16,11 @@ lazy_static! {
 
 struct Stdout;
 
+/// 多个核心使用的时候，会造成panic！
 impl Write for Stdout {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         for &c in s.as_bytes() {
-            // 此处关中断，防止多次borrow引发panic
-
-            unsafe {
-                asm!("cli");
-            }
-
             BUFFER.borrow_mut().write_byte(c);
-
-            unsafe {
-                asm!("sti");
-            }
         }
         Ok(())
     }
