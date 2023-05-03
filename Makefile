@@ -33,6 +33,7 @@ $(BUILD)/$(TARGET)/$(MODE)/libkernel.a:
 	cargo xbuild $(MODE_ARG) $(TARGET_ARG)
 
 $(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
+	$(BUILD)/kernel/interrupt/handler.o \
 	$(BUILD)/kernel/libkernel.a
 	$(shell mkdir -p $(dir $@))
 	ld.lld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)
@@ -53,7 +54,7 @@ $(BUILD)/master.img: $(BUILD)/bootloader/boot.bin \
 	dd if=$(BUILD)/bootloader/loader.bin of=$@ bs=512 count=4 seek=2 conv=notrunc
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=1000 seek=10 conv=notrunc
 
-test: $(BUILD)/kernel/libkernel.a
+test: $(BUILD)/kernel/interrupt/handler.o
 
 .PHONY: clean
 clean:
@@ -66,6 +67,14 @@ bochs: $(BUILD)/master.img
 .PHONY: qemu
 qemu: $(BUILD)/master.img
 	qemu-system-i386 \
+	-m 32M \
+	-boot c \
+	-hda $<
+
+.PHONY: qemut
+qemut: $(BUILD)/master.img
+	qemu-system-i386 \
+	-nographic \
 	-m 32M \
 	-boot c \
 	-hda $<

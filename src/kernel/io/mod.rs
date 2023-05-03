@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use core::arch::global_asm;
 
 global_asm!(include_str!("io.s"));

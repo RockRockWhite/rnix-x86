@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub static MEM_BASE: isize = 0xb8000; // 显卡内存起始位置
 pub static MEM_SIZE: isize = 0x4000; // 显卡内存大小
 pub static MEM_END: isize = MEM_BASE + MEM_SIZE; // 显卡内存结束位置

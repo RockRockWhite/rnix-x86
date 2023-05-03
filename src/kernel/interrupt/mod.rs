@@ -1,5 +1,6 @@
 mod constants;
 mod descriptor_table;
+pub mod pic;
 
 use crate::sync::UPSafeCell;
 use constants::*;

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use core::arch::asm;
 
 use super::constants::PAGE_SIZE;
@@ -41,7 +43,7 @@ impl Task {
     }
 
     // 获取当前运行的任务
-    fn running_task() -> *const Task {
+    pub fn running_task() -> *const Task {
         unsafe {
             let mut x: usize;
             asm!("mov {}, esp", out(reg) x);

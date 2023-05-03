@@ -1,6 +1,8 @@
+#![allow(dead_code)]
+
 use super::constants::*;
 use crate::io;
-use core::cmp::Ordering;
+use core::{arch::asm, cmp::Ordering};
 
 pub struct Position {
     x: isize,
@@ -151,7 +153,10 @@ impl Buffer {
         self.update_change();
     }
 
-    pub fn write_byte_mem(&mut self, byte: u8) {
+    /// write_byte
+    /// 向屏幕写一个字节
+    /// 此处通过开关中断保证原子性
+    pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\x07' => {} // \a
             b'\x08' => {
@@ -212,6 +217,6 @@ impl Buffer {
                 }
             }
         }
-        self._update_cursor_pos();
+        self.update_change();
     }
 }

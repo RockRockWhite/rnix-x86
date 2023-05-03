@@ -14,54 +14,47 @@ use core::arch::asm;
 use task::Task;
 
 #[no_mangle]
-pub extern "C" fn kernel_init() {
+pub extern "C" fn kernel_init() -> ! {
     global_descriptor::load_gdt();
 
     let task_a = unsafe { Task::from_ptr(0x1000, a_func).as_ref().unwrap() };
     let task_b = unsafe { Task::from_ptr(0x2000, b_func).as_ref().unwrap() };
 
+    interrupt::pic::init();
     extern "C" {
-        fn handler();
+        pub fn handler();
+        pub fn time_interrupt_handler();
     }
-
     interrupt::set_handler(0x80, handler as usize);
     interrupt::load_idt();
-
-    // let res = ;
-
-    // println!("res:{}", res);åå
-    // task_a.switch();
+    interrupt::set_handler(0x20, time_interrupt_handler as usize);
 
     unsafe {
-        asm!("int 0x80");
+        asm!("sti");
     }
 
-    // loop {}
+    loop {}
 }
 
 fn a_func() {
-    let mut res = 0;
     loop {
-        println!("a res:{}", res);
-        res += 1;
-
-        unsafe {
-            let task = 0x2000 as *mut Task;
-            task.as_ref().unwrap().switch();
+        for _ in 0..1000000 {
+            unsafe {
+                asm!("nop");
+            }
         }
+        print!("A");
     }
 }
 
 fn b_func() {
-    let mut res = 0;
     loop {
-        println!("b res:{}", res);
-        res += 1;
-
-        unsafe {
-            let task_a = 0x1000 as *mut Task;
-            task_a.as_ref().unwrap().switch();
+        for _ in 0..1000000 {
+            unsafe {
+                asm!("nop");
+            }
         }
+        print!("B");
     }
 }
 
