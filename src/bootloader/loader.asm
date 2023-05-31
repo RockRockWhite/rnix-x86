@@ -4,10 +4,12 @@ mov si, loading
 call print
 
 detect_memory:
+    xor ebx, ebx
+
     ; es:di 缓冲区地址
     mov ax, 0
     mov es, ax
-    mov di, ards_buffer
+    mov edi, ards_buffer
 
     ; 固定签名
     mov edx, 0x534d4150
@@ -21,7 +23,7 @@ detect_memory:
 
     jc error ; CF 表示错误
 
-    inc word [ards_count] ; 计数增加
+    inc dword [ards_count] ; 计数增加
 
     add di, cx ;下一个结构体
 
@@ -35,6 +37,14 @@ detect_memory:
     mov ecx, ards_count
     mov si, 0
 
+.show:
+    mov eax, [ards_buffer + si]
+    mov ebx, [ards_buffer + si + 8]
+    mov edx, [ards_buffer + si + 16]
+    add si, 20
+    xchg bx, bx
+    loop .show
+    
     jmp prepare_protected_mode
 
 print:
@@ -89,8 +99,11 @@ protected_mode:
     mov edi, 0x10000 ;读到10000
     mov ecx, 10 ; 10扇区开始
     mov ebx, 1000 ; 读1000个扇区
+
     call read_disk_more
 
+    mov eax, 0x20230531 ; 魔法值
+    mov ebx, ards_count ; ards 数量
 
     jmp dword code_selector:0x10000
 
@@ -238,5 +251,5 @@ gdt_data:
     db (memory_base >> 24) & 0xff;
 gdt_end:
 ards_count:
-    dw 0
+    dd 0
 ards_buffer:

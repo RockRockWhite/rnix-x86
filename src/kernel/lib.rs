@@ -7,6 +7,7 @@ mod global_descriptor;
 mod interrupt;
 mod io;
 mod lang_items;
+mod memory;
 mod sync;
 mod task;
 
@@ -14,8 +15,9 @@ use core::arch::asm;
 use task::Task;
 
 #[no_mangle]
-pub extern "C" fn kernel_init() -> ! {
+pub extern "C" fn kernel_init(magic: usize, ards_count: usize) -> ! {
     global_descriptor::load_gdt();
+    memory::memory_init(magic, ards_count);
 
     let task_a = unsafe { Task::from_ptr(0x1000, a_func).as_ref().unwrap() };
     let task_b = unsafe { Task::from_ptr(0x2000, b_func).as_ref().unwrap() };
@@ -23,11 +25,11 @@ pub extern "C" fn kernel_init() -> ! {
     interrupt::pic::init();
     extern "C" {
         pub fn handler();
-        pub fn time_interrupt_handler();
+        pub fn timer_interrupt_handler();
     }
     interrupt::set_handler(0x80, handler as usize);
     interrupt::load_idt();
-    interrupt::set_handler(0x20, time_interrupt_handler as usize);
+    interrupt::set_handler(0x20, timer_interrupt_handler as usize);
 
     unsafe {
         asm!("sti");

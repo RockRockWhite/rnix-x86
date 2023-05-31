@@ -5,6 +5,9 @@ global _start
 global handler
 
 _start:
+    push ebx ; ards_count
+    push eax ; magic
+    
     ; xchg bx, bx
     call kernel_init
     ; xchg bx, bx

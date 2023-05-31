@@ -6,7 +6,18 @@ handler:
     iret
 
 extern schedule
-global time_interrupt_handler
-time_interrupt_handler:
+global timer_interrupt_handler
+timer_interrupt_handler:
+    push ds
+    push es
+    push fs
+    pusha
+
     call schedule
+
+    popa
+    pop fs
+    pop es
+    pop ds
+
     iret
